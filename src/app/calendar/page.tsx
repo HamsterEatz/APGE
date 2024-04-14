@@ -39,10 +39,21 @@ export default function CalendarPage() {
         </form>
     </main>);
 
-    function onFormSubmit(e: any) {
+    async function onFormSubmit(e: any) {
         e.preventDefault();
-        // TODO: Add backend api to submit
+        const formData = new FormData(e.target);
+        formData.append('startDate', startTime!.toISOString());
+        formData.append('endDate', endTime!.toISOString());
+        const res = await fetch(`${location.origin}/calendar/event`, {
+            method: 'POST',
+            body: formData,
+        });
+        if (res.status === 201) {
+            return alert('Created event');
+        }
+        return alert(res.statusText);
     }
+
 
     function onDateChange(e: any) {
         const dateSelected = moment(e.target.value);
