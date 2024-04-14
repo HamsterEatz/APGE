@@ -3,6 +3,9 @@ import "../globals.css";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import momentTz from 'moment-timezone';
+
+momentTz.tz.setDefault('Asia/Singapore');
 
 export const metadata: Metadata = {
   title: "Calendar",

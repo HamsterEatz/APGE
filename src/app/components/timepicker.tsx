@@ -1,7 +1,7 @@
 import moment from "moment";
 
 export default function TimePicker(props: any) {
-    const { date, startTime, endTime, setStartTime, setEndTime } = props;
+    const { date, startTime, endTime, setStartTime, setEndTime, events } = props;
     const now = moment();
 
     const timeRowArr = new Array();
@@ -18,8 +18,12 @@ export default function TimePicker(props: any) {
 
             if ((startHour || startHour === 0) && (!endHour && endHour !== 0)) {
                 bgcondition = startHour === k && startMinute === 15 * x;
-            } else if (startHour === endHour) {
-                bgcondition = startHour === k && endHour === k && ((x * 15) >= startMinute) && (((x + 1) * 15) <= endMinute); 
+            } else if (startHour === endHour && startTime) {
+                if (startMinute === endMinute) {
+                    bgcondition = true;
+                } else {
+                    bgcondition = startHour === k && endHour === k && ((x * 15) >= startMinute) && (((x + 1) * 15) <= endMinute);
+                }
             } else if ((startHour || startHour === 0) && endHour) {
                 if (k === startHour) {
                     bgcondition = x * 15 >= startMinute;
@@ -31,13 +35,31 @@ export default function TimePicker(props: any) {
             }
 
             hourlyQuadInnerArr.push(<div id={`${k}/${15*x}`} onClick={onTimeClick}
-                className={`border ${bgcondition ? 'bg-cyan-600' : getBgColor(k, x * 15)} px-1 py-5 col-start-${x + 1}`} />);
+                className={`border ${bgcondition ? 'bg-cyan-600' : getBgColor(k, x * 15, events)} px-1 py-5 col-start-${x + 1}`} />);
         }
         hourlyQuadArr.push(<td className="border border-slate-500"><div className="grid grid-cols-4">{...hourlyQuadInnerArr}</div></td>);
     }
 
-    function getBgColor(hour: number, min: number) {
-        // if (unavailable) { return 'bg-red-500' }
+    function getBgColor(hour: number, min: number, events?: any) {
+        if (events && events?.length) {
+            for (const event of events) {
+                const currDate = date.hour(hour).minute(min);
+                let eventStart = moment(event.start.dateTime, moment.ISO_8601, true);
+                let eventEnd = moment(event.end.dateTime, moment.ISO_8601, true);
+                
+                if ((!eventStart.isValid() && !eventEnd.isValid()) || // If whole day event
+                (eventStart.isSameOrBefore(currDate) && eventEnd.isSameOrAfter(currDate))) {
+                    return 'bg-red-500';
+                }
+            }
+            if ((now.isBefore(date.endOf('day')) && now.date() !== date.date()) ||
+                (now.isBefore(date.endOf('day')) &&
+                (hour > now.hour() ||
+                hour === now.hour() && min >= now.minute()))) {
+                return 'bg-lime-500';
+            }
+            return 'bg-zinc-400';
+        }
         if ((now.isBefore(date.endOf('day')) && now.date() !== date.date()) ||
             (now.isBefore(date.endOf('day')) &&
             (hour > now.hour() ||
@@ -52,7 +74,19 @@ export default function TimePicker(props: any) {
         const [hour, minute] = id.split('/');
         const tempDate = date.clone().hour(Number(hour)).minute(Number(minute));
 
-        // TODO return if unavailable.
+        if (events && events?.length) {
+            for (const event of events) {
+                const eventStart = moment(event.start.dateTime);
+                const eventEnd = moment(event.end.dateTime);
+                if (startTime && !endTime && eventStart.isAfter(startTime) && tempDate.isAfter(eventStart)) {
+                    return; 
+                }
+                if ((!startTime || endTime) && tempDate.isSameOrAfter(eventStart) && tempDate.isSameOrBefore(eventEnd)) {
+                    return;
+                }
+            }
+        }
+        
         if (tempDate.isBefore(now)) {
             return;
         }

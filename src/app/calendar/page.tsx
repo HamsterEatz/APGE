@@ -1,15 +1,28 @@
 'use client';
 import moment from "moment";
-import momentTz from 'moment-timezone';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TimePicker } from "../components";
-
-momentTz.tz.setDefault('Asia/Singapore');
 
 export default function CalendarPage() {
     const [date, setDate] = useState<moment.Moment>();
     const [startTime, setStartTime] = useState<moment.Moment | null>();
     const [endTime, setEndTime] = useState<moment.Moment | null>();
+    const [events, setEvents] = useState<any>([]);
+
+    useEffect(() => {
+        getEvent(date).then((events) => setEvents(events));
+    }, [date]);
+
+    async function getEvent(date: moment.Moment | undefined) {
+        if (date) {
+            const res = await fetch(`/api/calendar?date=${date?.toISOString()}`, {
+                method: 'GET',  
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            return data;
+        }
+    }
 
     return (<main className='container mx-auto aspect-auto text-center'>
         <div className="inline-flex items-center">
@@ -22,7 +35,7 @@ export default function CalendarPage() {
                 <input type="date" id="eventDate" name="eventDate" required onChange={onDateChange} />
                 {date ?
                     <>
-                        <TimePicker date={date} startTime={startTime} endTime={endTime} setStartTime={setStartTime} setEndTime={setEndTime} />
+                        <TimePicker events={events} date={date} startTime={startTime} endTime={endTime} setStartTime={setStartTime} setEndTime={setEndTime} />
                         <div className="py-4">
                             <label htmlFor="eventName" className="pr-4">Event name:</label>
                             <input type="text" id="eventName" name="eventName" className="rounded-md flex-1 border-0 bg-gray-100 p-2" required></input>
@@ -44,10 +57,13 @@ export default function CalendarPage() {
 
     async function onFormSubmit(e: any) {
         e.preventDefault();
+        if (!startTime && !endTime) {
+            return alert('Please select time range!');
+        }
         const formData = new FormData(e.target);
-        formData.append('startDate', startTime!.toISOString());
-        formData.append('endDate', endTime!.toISOString());
-        const res = await fetch(`${location.origin}/calendar/event`, {
+        formData.append('startDate', startTime!.toString());
+        formData.append('endDate', endTime!.toString());
+        const res = await fetch(`${location.origin}/api/calendar`, {
             method: 'POST',
             body: formData,
         });
@@ -58,7 +74,7 @@ export default function CalendarPage() {
     }
 
 
-    function onDateChange(e: any) {
+    async function onDateChange(e: any) {
         const dateSelected = moment(e.target.value);
         setDate(dateSelected);
         setStartTime(null);

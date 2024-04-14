@@ -1,5 +1,7 @@
+import { getServerSession } from "next-auth";
 import getCalendar from "./getCalendar";
 import moment from "moment";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 interface EventI {
     eventName: string;
@@ -7,10 +9,13 @@ interface EventI {
     description?: string;
     startDate: string;
     endDate: string;
-    guest?: string;
 }
 
-export default async function addNewCalendarEventApi({ eventName, location, description, startDate, endDate, guest }: EventI) {
+export default async function addNewCalendarEventApi({ eventName, location, description, startDate, endDate }: EventI) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        throw new Error('Unauthorized');
+    }
     if (moment(startDate).isBefore(moment())) {
         throw new Error('Cannot create event with start date before now!');
     }
@@ -31,12 +36,15 @@ export default async function addNewCalendarEventApi({ eventName, location, desc
         throw new Error('Cannot overwrite an existing event!');
     }
 
+    const owner = process.env.GOOGLE_CALENDAR_ID;
+    const guest = session.user?.email;
+
     const req: any = {
         calendarId: calendar.calendarId,
         requestBody: {
             summary: eventName,
             location,
-            description,
+            description: `${description}\nCreated by ${guest}`,
             start: {
                 dateTime: new Date(startDate).toISOString(),
                 timeZone: "Asia/Singapore"
@@ -47,10 +55,6 @@ export default async function addNewCalendarEventApi({ eventName, location, desc
             },
         }
     };
-
-    if (guest) {
-        req[guest] = { attendees: [ { email: guest }] }
-    }
 
     const response = await calendar.events.insert(req);
 
