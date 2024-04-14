@@ -12,7 +12,10 @@ export default function CalendarPage() {
     const [endTime, setEndTime] = useState<moment.Moment | null>();
 
     return (<main className='container mx-auto aspect-auto text-center'>
-        <h1 className="mx-12 mt-6 text-2xl pb-4 font-bold">Create event</h1>
+        <div className="inline-flex items-center">
+            <h1 className="mx-12 mt-6 text-2xl pb-4 font-bold">Create event</h1>
+            <a href="/api/auth/signout" className="border p-2">Sign out</a>
+        </div>
         <form className="mx-12 border" onSubmit={onFormSubmit}>
             <div className="m-4">
                 <label htmlFor="eventDate">Event date:</label>
