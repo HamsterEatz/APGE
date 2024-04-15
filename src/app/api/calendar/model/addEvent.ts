@@ -36,7 +36,7 @@ export default async function addNewCalendarEventApi({ eventName, location, desc
         throw new Error('Cannot overwrite an existing event!');
     }
 
-    const owner = process.env.GOOGLE_CALENDAR_ID;
+    const owner = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID;
     const guest = session.user?.email;
 
     const req: any = {

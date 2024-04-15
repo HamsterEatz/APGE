@@ -2,7 +2,7 @@ import { GoogleAuth } from "google-auth-library";
 import { google } from "googleapis";
 
 export default async function getCalendar() {
-    const calendarId = process.env.GOOGLE_CALENDAR_ID;
+    const calendarId = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID;
 
     const auth = new GoogleAuth({
         credentials: {

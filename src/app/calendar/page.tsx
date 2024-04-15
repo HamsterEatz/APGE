@@ -2,12 +2,20 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { TimePicker } from "../components";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import path from "path";
+import SettingsIcon from '../../../public/settings.svg'
 
 export default function CalendarPage() {
     const [date, setDate] = useState<moment.Moment>();
     const [startTime, setStartTime] = useState<moment.Moment | null>();
     const [endTime, setEndTime] = useState<moment.Moment | null>();
     const [events, setEvents] = useState<any>([]);
+    const { data: session } = useSession();
+
+    const owner = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID;
 
     useEffect(() => {
         getEvent(date).then((events) => setEvents(events));
@@ -28,6 +36,9 @@ export default function CalendarPage() {
         <div className="inline-flex items-center">
             <h1 className="mx-12 mt-6 text-2xl pb-4 font-bold">Create event</h1>
             <a href="/api/auth/signout" className="border p-2">Sign out</a>
+            {session && owner === session.user?.email ? <Link className="ml-12" href="../whitelist">
+                <Image alt="" src={SettingsIcon} width={30} height={30} />
+                </Link> : <></>}
         </div>
         <form className="mx-12 border" onSubmit={onFormSubmit}>
             <div className="m-4">
