@@ -5,20 +5,24 @@ import { TimePicker } from "../components";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import path from "path";
 import SettingsIcon from '../../../public/settings.svg'
+import LoadingModal from "../components/loadingModal";
 
 export default function CalendarPage() {
     const [date, setDate] = useState<moment.Moment>();
     const [startTime, setStartTime] = useState<moment.Moment | null>();
     const [endTime, setEndTime] = useState<moment.Moment | null>();
     const [events, setEvents] = useState<any>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const { data: session } = useSession();
 
     const owner = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID;
 
     useEffect(() => {
-        getEvent(date).then((events) => setEvents(events));
+        getEvent(date).then((events) => {
+            setEvents(events);
+            setIsLoading(false);
+        });
     }, [date]);
 
     async function getEvent(date: moment.Moment | undefined) {
@@ -33,6 +37,7 @@ export default function CalendarPage() {
     }
 
     return (<main className='container mx-auto aspect-auto text-center'>
+        {isLoading ? <LoadingModal /> : <></>}
         <div className="inline-flex items-center">
             <h1 className="mx-12 mt-6 text-2xl pb-4 font-bold">Create event</h1>
             <a href="/api/auth/signout" className="border p-2">Sign out</a>
@@ -71,6 +76,7 @@ export default function CalendarPage() {
         if (!startTime && !endTime) {
             return alert('Please select time range!');
         }
+        setIsLoading(true);
         const formData = new FormData(e.target);
         formData.append('startDate', startTime!.toString());
         formData.append('endDate', endTime!.toString());
@@ -79,13 +85,17 @@ export default function CalendarPage() {
             body: formData,
         });
         if (res.status === 201) {
-            return alert('Created event');
+            alert('Created event');
+        } else {
+            alert(res.statusText);
         }
-        return alert(res.statusText);
+
+        return location.reload();
     }
 
 
     async function onDateChange(e: any) {
+        setIsLoading(true);
         const dateSelected = moment(e.target.value);
         setDate(dateSelected);
         setStartTime(null);
