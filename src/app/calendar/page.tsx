@@ -26,13 +26,17 @@ export default function CalendarPage() {
     }, [date]);
 
     async function getEvent(date: moment.Moment | undefined) {
-        if (date) {
-            const res = await fetch(`/api/calendar?date=${date?.toISOString()}`, {
-                method: 'GET',  
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const data = await res.json();
-            return data;
+        try {
+            if (date) {
+                const res = await fetch(`/api/calendar?date=${date?.toISOString()}`, {
+                    method: 'GET',  
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                return data;
+            }
+        } catch (e) {
+            alert('Something went wrong...');
         }
     }
 

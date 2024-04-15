@@ -5,7 +5,7 @@ export default function getNodeMailer() {
     const password = process.env.SENDER_EMAIL_PASSWORD;
 
     const transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
+        host: 'smtp.gmail.com',
         port: 587,
         auth: {
             user: email,

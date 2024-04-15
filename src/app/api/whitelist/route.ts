@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/[...nextauth]";
 import { NextRequest } from "next/server";
 import fs from 'fs';
 import path from 'path';
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         }
         const json = {
             users: [...users, email]
-        }
+        };
         fs.writeFileSync(path.resolve(__dirname, '../../../../../whitelist.json'), JSON.stringify(json));
         return new Response(null, { status: 201, statusText: `${email} added into whitelist!`});
     } catch (e: any) {

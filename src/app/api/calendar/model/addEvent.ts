@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import getCalendar from "./getCalendar";
 import moment from "moment";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../auth/[...nextauth]";
 
 interface EventI {
     eventName: string;

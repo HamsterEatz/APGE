@@ -5,7 +5,7 @@ import { Providers } from "./provider";
 import { getServerSession } from "next-auth";
 import { isUserWhitelisted } from "./api/auth/auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "./api/auth/[...nextauth]";
 import momentTz from 'moment-timezone';
 
 momentTz.tz.setDefault('Asia/Singapore');

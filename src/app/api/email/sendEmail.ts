@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import getNodeMailer from "./getNodeMailer";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/[...nextauth]";
 
 export default async function sendEmail(subject: string, html: any) {
     try {
