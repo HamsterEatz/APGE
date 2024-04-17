@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/moment": "^2.13.0",
+    "firebase": "^10.11.0",
     "google-auth-library": "^9.7.0",
     "googleapis": "^134.0.0",
     "moment": "^2.30.1",

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./provider";
+import Providers from "./provider";
 import { getServerSession } from "next-auth";
-import { isUserWhitelisted } from "./api/auth/auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "./api/auth/[...nextauth]";
 import momentTz from 'moment-timezone';
@@ -26,13 +25,9 @@ export default async function RootLayout({
   if (!session) {
     redirect('/api/auth/signin');
   }
-
-  if (session && !(await isUserWhitelisted(session))) {
-    redirect('/api/auth/signout');
-  }
   return (
     <html lang="en">
-      <body className={inter.className}><Providers>{children}</Providers></body>
+      <body className={inter.className}><Providers session={session}>{children}</Providers></body>
     </html>
   );
 }
