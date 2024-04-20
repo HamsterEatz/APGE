@@ -5,7 +5,10 @@ export default async function getUsers() {
     const usersRef = ref(database, '/');
     const data = await get(usersRef);
     if (data.exists()) {
-        return data.val();
+        const { users } = await data.val();
+        return {
+            users: users.filter(((v: string) => (v === undefined ? null : v)))
+        }
     }
     throw new Error('Unable to get users from database!');
 }
