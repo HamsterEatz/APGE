@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export default function TimePicker(props: any) {
+export default function DayCalendar(props: any) {
     const { date, startTime, endTime, setStartTime, setEndTime, events } = props;
     const now = moment();
 
@@ -34,7 +34,7 @@ export default function TimePicker(props: any) {
                 }
             }
 
-            hourlyQuadInnerArr.push(<div id={`${k}/${15*x}`} onClick={onTimeClick}
+            hourlyQuadInnerArr.push(<div id={`${k}/${15 * x}`} onClick={onTimeClick}
                 className={`border ${bgcondition ? 'bg-cyan-600' : getBgColor(k, x * 15, events)} px-1 py-5 col-start-${x + 1}`} />);
         }
         hourlyQuadArr.push(<td className="border border-slate-500"><div className="grid grid-cols-4">{...hourlyQuadInnerArr}</div></td>);
@@ -46,24 +46,24 @@ export default function TimePicker(props: any) {
                 const currDate = date.hour(hour).minute(min);
                 let eventStart = moment(event.start.dateTime, moment.ISO_8601, true);
                 let eventEnd = moment(event.end.dateTime, moment.ISO_8601, true);
-                
+
                 if ((!eventStart.isValid() && !eventEnd.isValid()) || // If whole day event
-                (eventStart.isSameOrBefore(currDate) && eventEnd.isSameOrAfter(currDate))) {
+                    (eventStart.isSameOrBefore(currDate) && eventEnd.isSameOrAfter(currDate))) {
                     return 'bg-red-500';
                 }
             }
             if ((now.isBefore(date.endOf('day')) && now.date() !== date.date()) ||
                 (now.isBefore(date.endOf('day')) &&
-                (hour > now.hour() ||
-                hour === now.hour() && min >= now.minute()))) {
+                    (hour > now.hour() ||
+                        hour === now.hour() && min >= now.minute()))) {
                 return 'bg-lime-500';
             }
             return 'bg-zinc-400';
         }
         if ((now.isBefore(date.endOf('day')) && now.date() !== date.date()) ||
             (now.isBefore(date.endOf('day')) &&
-            (hour > now.hour() ||
-            hour === now.hour() && min >= now.minute()))) {
+                (hour > now.hour() ||
+                    hour === now.hour() && min >= now.minute()))) {
             return 'bg-lime-500';
         }
         return 'bg-zinc-400';
@@ -79,14 +79,14 @@ export default function TimePicker(props: any) {
                 const eventStart = moment(event.start.dateTime);
                 const eventEnd = moment(event.end.dateTime);
                 if (startTime && !endTime && eventStart.isAfter(startTime) && tempDate.isAfter(eventStart)) {
-                    return; 
+                    return;
                 }
                 if ((!startTime || endTime) && tempDate.isSameOrAfter(eventStart) && tempDate.isSameOrBefore(eventEnd)) {
                     return;
                 }
             }
         }
-        
+
         if (tempDate.isBefore(now)) {
             return;
         }

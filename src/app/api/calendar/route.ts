@@ -2,17 +2,19 @@ import { NextRequest } from 'next/server';
 import { addEvent } from './model';
 import getEvents from './model/getEvents';
 import sendEmail from '../email/sendEmail';
+import { CALENDAR_TYPE } from '@/app/constants';
 
 export async function GET(req: NextRequest) {
     try {
-        const date = await req.nextUrl.searchParams?.get('date');
-        if (date) {
-            const data = await getEvents(date);
+        const start = await req.nextUrl.searchParams?.get('start');
+        const end = await req.nextUrl.searchParams?.get('end');
+        if (start && end) {
+            const data = await getEvents(start, end);
             return new Response(JSON.stringify(data));
         }
         throw new Error('Date not defined!');
     } catch (e: any) {
-        return new Response(null, { status: 401, statusText: e.message  });
+        return new Response(null, { status: 401, statusText: e.message });
     }
 }
 
@@ -69,6 +71,6 @@ export async function POST(req: Request) {
             sendEmailResponse: emailRes
         }), { status: 201 });
     } catch (e: any) {
-        return new Response(null, { status: 401, statusText: e.message  });
+        return new Response(null, { status: 401, statusText: e.message });
     }
 }

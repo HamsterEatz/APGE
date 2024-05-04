@@ -1,11 +1,10 @@
 import moment from "moment";
 import getCalendar from "./getCalendar";
 
-export default async function getEvents(date: string) {
+export default async function getEvents(startDate: string, endDate: string) {
     const calendar = await getCalendar();
-    const mDate = moment(date);
-    const start = mDate.clone().startOf('day');
-    const end = mDate.clone().endOf('day');
+    const start = moment(startDate).startOf('day');
+    const end = moment(endDate).endOf('day');
 
     const res = await calendar.events.list({
         calendarId: calendar.calendarId,

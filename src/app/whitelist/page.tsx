@@ -1,10 +1,10 @@
 'use client';
 import { useEffect, useState } from "react";
-import LoadingModal from "../components/loadingModal";
+import { LoadingModal } from "../components";
 
 export default function Whitelist() {
     const [whitelistedUsers, setWhitelistedUsers] = useState<any>(undefined);
-    
+
     useEffect(() => {
         getUserWhitelist();
     }, []);
@@ -60,7 +60,7 @@ export default function Whitelist() {
             {whitelistedUsers?.length ? <div className='py-4 border mx-12 mb-6 bg-slate-100'>
                 <h4 className="font-bold text-lg underline pb-2">Current list of whitelisted users:</h4>
                 <ol className="list-inside list-decimal">
-                    {whitelistedUsers.map((v: string, k: number) => 
+                    {whitelistedUsers.map((v: string, k: number) =>
                         <li key={k}>
                             {v}
                             <button type="button" id={v} onClick={(e) => onEmailDelete(e, v)} className="ml-4 mt-2 rounded-md bg-red-600 px-3 py-2 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">x</button>
