@@ -11,11 +11,17 @@ export default async function sendEmail(subject: string, html: any) {
         }
 
         const { transporter, senderEmail } = getNodeMailer();
-        return transporter.sendMail({
+        await transporter.sendMail({
             from: `APGE <${senderEmail}>`,
             to: receiverEmail,
             subject,
-            html
+            html: await html(false)
+        });
+        return transporter.sendMail({
+            from: `APGE <${senderEmail}>`,
+            to: process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID,
+            subject,
+            html: await html(true)
         });
     } catch (e: any) {
         console.error(e.message)
