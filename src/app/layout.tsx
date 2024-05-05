@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./provider";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import { authOptions } from "./api/auth/[...nextauth]";
 import momentTz from 'moment-timezone';
 
@@ -22,9 +21,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  if (!session) {
-    redirect('/api/auth/signin');
-  }
   return (
     <html lang="en">
       <body className={inter.className}><Providers session={session}>{children}</Providers></body>

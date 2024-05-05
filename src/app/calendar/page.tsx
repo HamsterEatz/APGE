@@ -8,6 +8,7 @@ import Image from "next/image";
 import SettingsIcon from '../../../public/settings.svg'
 import { LoadingModal } from "../components";
 import { CALENDAR_TYPE } from "../constants";
+import { MonthCalendar } from "../components/calendar";
 
 export default function CalendarPage() {
     const [date, setDate] = useState<moment.Moment>(moment());
@@ -34,8 +35,13 @@ export default function CalendarPage() {
                 let end = date?.toISOString();
                 switch (activeDropdownItem) {
                     case CALENDAR_TYPE.WEEK: {
-                        start = date.startOf('week').toISOString();
-                        end = date.endOf('week').toISOString();
+                        start = date.clone().startOf('week').toISOString();
+                        end = date.clone().endOf('week').toISOString();
+                        break;
+                    }
+                    case CALENDAR_TYPE.MONTH: {
+                        start = date.clone().startOf('month').startOf('week').toISOString();
+                        end = date.clone().endOf('month').endOf('week').toISOString();
                         break;
                     }
                 }
@@ -89,7 +95,9 @@ export default function CalendarPage() {
                         </div>
                         <button type="submit" className="rounded-md bg-indigo-600 px-3 py-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create event</button>
                     </>
-                    : <WeekCalendar date={date} events={events} setDate={setDate} setActiveDropdownItem={setActiveDropdownItem} />}
+                    : activeDropdownItem === CALENDAR_TYPE.WEEK ?
+                        <WeekCalendar date={date} events={events} setDate={setDate} setActiveDropdownItem={setActiveDropdownItem} /> :
+                        <MonthCalendar date={date} events={events} setDate={setDate} setActiveDropdownItem={setActiveDropdownItem} />}
             </div>
         </form>
     </main>);

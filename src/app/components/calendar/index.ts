@@ -1,4 +1,5 @@
 import DayCalendar from "./DayCalendar";
 import WeekCalendar from './WeekCalendar';
+import MonthCalendar from './MonthCalendar';
 
-export { DayCalendar, WeekCalendar };
+export { DayCalendar, WeekCalendar, MonthCalendar };

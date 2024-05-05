@@ -29,8 +29,10 @@ export default function WeekCalendar({ date, events, setDate, setActiveDropdownI
             const currentMoment = startDayOfTheWeek.clone().day(startDayOfTheWeek.day() + i).hour(hr);
             if (events && events?.length) {
                 for (const event of events) {
-                    const eventStartTime = moment(event.start.dateTime).startOf('hour');
-                    const eventEndTime = moment(event.end.dateTime);
+                    const eventStart = event.start;
+                    const eventEnd = event.end;
+                    const eventStartTime = moment(eventStart!!.dateTime || eventStart.date).startOf('hour');
+                    const eventEndTime = moment(eventEnd!!.dateTime || eventEnd.date);
                     if (currentMoment.isSameOrAfter(eventStartTime) && currentMoment.isBefore(eventEndTime)) {
                         dateArr.push(<td className="border border-slate-500 bg-red-500"></td>);
                         pushed = true;
